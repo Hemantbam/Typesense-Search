@@ -16,11 +16,26 @@ export class RoomService {
   async addRoom(roomDto: RoomDto): Promise<ServiceResponseDataType> {
     try {
       const addResponse = await this.roomRepository.addRoom(roomDto);
+
       if (!addResponse) {
         return this.responseHandler.badRequestResponse(
           'Bad request, try again',
         );
       }
+
+      await this.typeSenseSearch.indexRoom({
+        id: addResponse.id.toString(),
+        title: addResponse.title,
+        description: addResponse.description,
+        location: addResponse.location,
+        price: addResponse.price,
+        roomType: addResponse.roomType,
+        amenities: addResponse.amenities,
+        isAvailable: addResponse.isAvailable,
+        createdAt: addResponse.createdAt.toISOString(),
+        updatedAt: addResponse.updatedAt.toISOString(),
+      });
+
       return this.responseHandler.successResponse(
         'A new room detail added and indexed successfully',
       );
@@ -76,7 +91,7 @@ export class RoomService {
     }
 
     try {
-      console.log(query)
+      console.log(query);
       const searchResults = await this.typeSenseSearch
         .getClient()
         .collections('rooms')

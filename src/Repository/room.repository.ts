@@ -12,12 +12,9 @@ export class RoomRepository {
 
   async addRoom(roomDetails: Partial<RoomEntity>): Promise<any> {
     try {
-      console.log('2222222222', roomDetails);
       const newRoom = this.roomRepository.create(roomDetails);
-      console.log('555555555', newRoom);
       const result = await this.roomRepository.save(newRoom);
-      console.log('shgdhsjagjsjadkjagkdgakj', result);
-      return !!result.id;
+      return result ? result : '';
     } catch (error) {
       console.log(error);
     }
