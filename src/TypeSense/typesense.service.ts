@@ -105,4 +105,13 @@ export class TypeSenseService implements OnModuleInit {
 
     return result.hits?.map((hit) => hit.document) ?? [];
   }
+
+  async deleteFromTypesense(id: number): Promise<void> {
+    try {
+      await this.client.collections('rooms').documents(id.toString()).delete();
+      console.log(`Room with ID ${id} deleted from Typesense index.`);
+    } catch (error) {
+      console.error(`Failed to delete room ${id} from Typesense`, error);
+    }
+  }
 }

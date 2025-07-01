@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ResponseHandler } from 'src/Utils/responseHandeller';
-import { RoomDto } from '../Dto/room.dto';
+import { RoomDto, UpdateRoomDto } from '../Dto/room.dto';
 import { ServiceResponseDataType } from 'src/Utils/apiResponse';
 import { TypeSenseService } from 'src/TypeSense/typesense.service';
 import { Repository } from 'typeorm';
@@ -126,11 +126,11 @@ export class RoomService {
 
   async deleteRoom(roomId: RoomIdDto): Promise<ServiceResponseDataType> {
     try {
-      const roomDetails = await this.roomRepository.findOne({
+      const existingRoom = await this.roomRepository.findOne({
         where: { id: roomId.id },
       });
 
-      if (!roomDetails) {
+      if (!existingRoom) {
         return this.responseHandler.notFoundResponse(
           `No details of room found for id ${roomId.id}`,
         );
@@ -142,8 +142,55 @@ export class RoomService {
           'Unable to delete the room details',
         );
       }
+      await this.typeSenseSearch.deleteFromTypesense(roomId.id!);
       return this.responseHandler.successResponse(
         'Room details deleted successfully',
+      );
+    } catch (error) {
+      console.log(error);
+      return this.responseHandler.unexpectedErrorResponse(
+        'Internal server error',
+      );
+    }
+  }
+
+  async updateRoomDetails(
+    roomId: RoomIdDto,
+    roomDto: UpdateRoomDto,
+  ): Promise<ServiceResponseDataType> {
+    try {
+      const existingRoom = await this.roomRepository.findOne({
+        where: { id: roomId.id },
+      });
+      if (!existingRoom) {
+        return this.responseHandler.notFoundResponse(
+          `No room details found for id ${roomId.id}`,
+        );
+      }
+
+      const updatedRoom = this.roomRepository.merge(existingRoom, {
+        ...roomDto,
+        updatedAt: new Date(),
+      });
+
+      await this.roomRepository.save(updatedRoom);
+
+      await this.typeSenseSearch.indexRoom({
+        id: roomId.id!.toString(),
+        title: updatedRoom.title,
+        description: updatedRoom.description,
+        location: updatedRoom.location,
+        price: updatedRoom.price,
+        roomType: updatedRoom.roomType,
+        amenities: updatedRoom.amenities,
+        isAvailable: updatedRoom.isAvailable,
+        createdAt: updatedRoom.createdAt.toISOString(),
+        updatedAt: updatedRoom.updatedAt.toISOString(),
+      });
+
+      return this.responseHandler.successResponse(
+        'Room updated successfully',
+        updatedRoom,
       );
     } catch (error) {
       console.log(error);

@@ -1,6 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Controller, Post, Body, Get, Query, Delete } from '@nestjs/common';
-import { RoomDto, RoomIdDto, SearchRoomDto } from '../Dto/room.dto';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  Delete,
+  Patch,
+} from '@nestjs/common';
+import {
+  RoomDto,
+  RoomIdDto,
+  SearchRoomDto,
+  UpdateRoomDto,
+} from '../Dto/room.dto';
 import { RoomService } from '../Service/room.service';
 import {
   ControllerResponse,
@@ -32,6 +45,15 @@ export class RoomController {
     @Query() roomId: RoomIdDto,
   ): Promise<ControllerResponseDataType> {
     const result = await this.roomService.deleteRoom(roomId);
+    return ControllerResponse(result.status, result.message, result.details);
+  }
+
+  @Patch()
+  async updateDetails(
+    @Query() roomId: RoomIdDto,
+    @Body() roomDto: UpdateRoomDto,
+  ): Promise<ControllerResponseDataType> {
+    const result = await this.roomService.updateRoomDetails(roomId, roomDto);
     return ControllerResponse(result.status, result.message, result.details);
   }
 }

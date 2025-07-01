@@ -54,3 +54,34 @@ export class RoomIdDto {
   @Type(() => Number)
   id?: number;
 }
+
+export class UpdateRoomDto {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsOptional()
+  @IsNumber()
+  price?: number;
+
+  @IsOptional()
+  @IsString()
+  roomType?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  amenities?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isAvailable?: boolean;
+}
