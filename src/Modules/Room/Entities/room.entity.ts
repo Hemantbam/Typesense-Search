@@ -36,4 +36,5 @@ export class RoomEntity {
 
   @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
+  company_name: any;
 }

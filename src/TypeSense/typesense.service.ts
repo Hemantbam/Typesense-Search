@@ -3,6 +3,8 @@ import Typesense, { Client } from 'typesense';
 import { Repository } from 'typeorm';
 import { RoomEntity } from 'src/Modules/Room/Entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JobEntity } from 'src/Modules/jobs/entities/job.entity';
+import { JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 @Injectable()
 export class TypeSenseService implements OnModuleInit {
   private client: Client;
@@ -10,6 +12,8 @@ export class TypeSenseService implements OnModuleInit {
   constructor(
     @InjectRepository(RoomEntity)
     private readonly roomRepository: Repository<RoomEntity>,
+    @InjectRepository(JobEntity)
+    private readonly jobRepository: Repository<JobEntity>,
   ) {
     this.client = new Typesense.Client({
       nodes: [
@@ -31,6 +35,9 @@ export class TypeSenseService implements OnModuleInit {
   async onModuleInit() {
     await this.createOrUpdateRoomCollection();
     await this.syncAllRoomsToTypesense();
+
+    await this.createOrUpdateJobCollection();
+    await this.syncAllJobsToTypesense();
   }
 
   private async createOrUpdateRoomCollection(): Promise<void> {
@@ -59,6 +66,7 @@ export class TypeSenseService implements OnModuleInit {
       console.log('Collection created.');
     }
   }
+
   async syncAllRoomsToTypesense(): Promise<any> {
     try {
       const allRooms = await this.roomRepository.find();
@@ -113,5 +121,79 @@ export class TypeSenseService implements OnModuleInit {
     } catch (error) {
       console.error(`Failed to delete room ${id} from Typesense`, error);
     }
+  }
+
+  //Jobs
+  private async createOrUpdateJobCollection(): Promise<void> {
+    const schema = {
+      name: 'jobs',
+      fields: [
+        { name: 'id', type: 'int32' },
+        { name: 'title', type: 'string' },
+        { name: 'company_name', type: 'string' },
+        { name: 'location', type: 'string' },
+        { name: 'description', type: 'string' },
+        { name: 'employment_type', type: 'string' },
+        { name: 'hourly_pay', type: 'float' },
+        { name: 'urgent_hiring', type: 'bool' },
+        { name: 'remote_option', type: 'bool' },
+        { name: 'experience_required', type: 'string', optional: true },
+        { name: 'education_level', type: 'string', optional: true },
+        { name: 'application_deadline', type: 'string', optional: true },
+        { name: 'posted_at', type: 'int64' },
+        { name: 'updated_at', type: 'int64' },
+      ],
+      default_sorting_field: 'posted_at',
+    };
+
+    try {
+      await this.client.collections('jobs').retrieve();
+      console.log('Jobs collection already exists.');
+    } catch {
+      await this.client.collections().create(schema as any);
+      console.log('Jobs collection created.');
+    }
+  }
+
+  async syncAllJobsToTypesense(): Promise<void> {
+    try {
+      const allJobs = await this.jobRepository.find();
+
+      if (!allJobs || allJobs.length === 0) {
+        console.log('No jobs found to index.');
+        return;
+      }
+
+      const jobPromises = allJobs.map((job) => {
+        const formattedJob = {
+          id: job.id.toString(),
+          title: job.title,
+          company_name: job.company_name,
+          location: job.location,
+          description: job.description,
+          employment_type: job.employment_type,
+          hourly_pay: job.hourly_pay,
+          urgent_hiring: job.urgent_hiring,
+          remote_option: job.remote_option,
+          experience_required: job.experience_required || '',
+          education_level: job.education_level || '',
+          application_deadline: job.application_deadline?.toISOString() || '',
+          posted_at: job.posted_at.toISOString(),
+          updated_at: job.updated_at.toISOString(),
+        };
+
+        return this.indexJobs(formattedJob);
+      });
+
+      await Promise.all(jobPromises);
+
+      console.log('All jobs indexed to Typesense.');
+    } catch (error) {
+      console.error('Failed to sync jobs:', error);
+    }
+  }
+
+  async indexJobs(jobData: any): Promise<any> {
+    return this.client.collections('rooms').documents().upsert(jobData);
   }
 }

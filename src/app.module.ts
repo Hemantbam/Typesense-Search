@@ -2,9 +2,9 @@
 import { Module } from '@nestjs/common';
 import { RoomModule } from './Modules/Room/room.module';
 import { AppDbModule } from 'DbConn/dbConn';
-
+import { JobsModule } from './Modules/jobs/jobs.module';
 @Module({
-  imports: [RoomModule, AppDbModule],
+  imports: [RoomModule, AppDbModule, JobsModule],
   controllers: [],
   providers: [],
 })
