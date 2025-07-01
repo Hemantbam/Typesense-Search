@@ -6,7 +6,7 @@ import { TypeSenseService } from 'src/TypeSense/typesense.service';
 import { Repository } from 'typeorm';
 import { RoomEntity } from 'src/Modules/Room/Entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { RoomIdDto } from '../Dto/room.dto';
 @Injectable()
 export class RoomService {
   constructor(
@@ -120,6 +120,35 @@ export class RoomService {
       console.error('Typesense search error:', error);
       return this.responseHandler.unexpectedErrorResponse(
         'Error while searching rooms',
+      );
+    }
+  }
+
+  async deleteRoom(roomId: RoomIdDto): Promise<ServiceResponseDataType> {
+    try {
+      const roomDetails = await this.roomRepository.findOne({
+        where: { id: roomId.id },
+      });
+
+      if (!roomDetails) {
+        return this.responseHandler.notFoundResponse(
+          `No details of room found for id ${roomId.id}`,
+        );
+      }
+
+      const deleteRoom = await this.roomRepository.delete(roomId.id!);
+      if (deleteRoom.affected === 0) {
+        return this.responseHandler.badRequestResponse(
+          'Unable to delete the room details',
+        );
+      }
+      return this.responseHandler.successResponse(
+        'Room details deleted successfully',
+      );
+    } catch (error) {
+      console.log(error);
+      return this.responseHandler.unexpectedErrorResponse(
+        'Internal server error',
       );
     }
   }

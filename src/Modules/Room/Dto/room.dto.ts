@@ -12,7 +12,6 @@ import {
 import { Type } from 'class-transformer';
 
 export class RoomDto {
-
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -41,11 +40,17 @@ export class RoomDto {
   @IsNotEmpty()
   @IsBoolean()
   isAvailable: boolean;
-
 }
 
 export class SearchRoomDto {
   @IsOptional()
   @IsString()
   q?: string;
+}
+
+export class RoomIdDto {
+  @IsNotEmpty()
+  @IsNumber()
+  @Type(() => Number)
+  id?: number;
 }
