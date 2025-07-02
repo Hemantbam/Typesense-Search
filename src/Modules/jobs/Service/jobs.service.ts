@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateJobDto } from '../dto/create-job.dto';
-import { UpdateJobDto } from '../dto/update-job.dto';
+import { CreateJobDto } from '../Dto/create-job.dto';
+import { UpdateJobDto } from '../Dto/update-job.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobEntity } from '../entities/job.entity';
+import { JobEntity } from '../Entities/job.entity';
 import { Repository } from 'typeorm';
 import { ResponseHandler } from 'src/Utils/responseHandeller';
 import { ServiceResponseDataType } from 'src/Utils/apiResponse';

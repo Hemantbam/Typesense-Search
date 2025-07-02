@@ -3,7 +3,7 @@ import Typesense, { Client } from 'typesense';
 import { Repository } from 'typeorm';
 import { RoomEntity } from 'src/Modules/Room/Entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobEntity } from 'src/Modules/jobs/entities/job.entity';
+import { JobEntity } from 'src/Modules/jobs/Entities/job.entity';
 import { JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 @Injectable()
 export class TypeSenseService implements OnModuleInit {

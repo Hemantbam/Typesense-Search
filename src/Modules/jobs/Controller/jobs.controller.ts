@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { JobsService } from '../Service/jobs.service';
-import { CreateJobDto } from '../dto/create-job.dto';
-import { UpdateJobDto } from '../dto/update-job.dto';
+import { CreateJobDto } from '../Dto/create-job.dto';
+import { UpdateJobDto } from '../Dto/update-job.dto';
 import { ControllerResponseDataType } from 'src/Utils/apiResponse';
 import { ControllerResponse } from 'src/Utils/apiResponse';
 @Controller('jobs')
