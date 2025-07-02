@@ -172,14 +172,16 @@ export class TypeSenseService implements OnModuleInit {
           location: job.location,
           description: job.description,
           employment_type: job.employment_type,
-          hourly_pay: job.hourly_pay,
+          hourly_pay: parseFloat(job.hourly_pay as any),
           urgent_hiring: job.urgent_hiring,
           remote_option: job.remote_option,
           experience_required: job.experience_required || '',
           education_level: job.education_level || '',
-          application_deadline: job.application_deadline?.toISOString() || '',
-          posted_at: job.posted_at.toISOString(),
-          updated_at: job.updated_at.toISOString(),
+          application_deadline: job.application_deadline
+            ? new Date(job.application_deadline).toISOString()
+            : '',
+          posted_at: new Date(job.posted_at).getTime(),
+          updated_at: new Date(job.updated_at).getTime(),
         };
 
         return this.indexJobs(formattedJob);
@@ -194,6 +196,6 @@ export class TypeSenseService implements OnModuleInit {
   }
 
   async indexJobs(jobData: any): Promise<any> {
-    return this.client.collections('rooms').documents().upsert(jobData);
+    return this.client.collections('jobs').documents().upsert(jobData);
   }
 }

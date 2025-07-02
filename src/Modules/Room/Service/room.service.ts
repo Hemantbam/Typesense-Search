@@ -100,7 +100,6 @@ export class RoomService {
     }
 
     try {
-      console.log(query);
       const searchResults = await this.typeSenseSearch
         .getClient()
         .collections('rooms')

@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { JobsService } from '../Service/jobs.service';
 import { CreateJobDto } from '../Dto/create-job.dto';
 import { UpdateJobDto } from '../Dto/update-job.dto';
 import { ControllerResponseDataType } from 'src/Utils/apiResponse';
 import { ControllerResponse } from 'src/Utils/apiResponse';
+import { JobIdDto, SearchJobDto } from '../Dto/common-job.dto';
+
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
@@ -25,22 +28,32 @@ export class JobsController {
   }
 
   @Get()
-  findAll() {
-    return this.jobsService.findAll();
+  async findAll(): Promise<ControllerResponseDataType> {
+    const result = await this.jobsService.findAllJobs();
+    return ControllerResponse(result.status, result.message, result.details);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobsService.findOne(+id);
+  @Get(':search')
+  async findByQuery(
+    @Query() searchJob: SearchJobDto,
+  ): Promise<ControllerResponseDataType> {
+    const result = await this.jobsService.findOne(searchJob);
+    return ControllerResponse(result.status, result.message, result.details);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobsService.update(+id, updateJobDto);
+  async update(
+    @Param() id: JobIdDto,
+    @Body() updateJobDto: UpdateJobDto,
+  ): Promise<ControllerResponseDataType> {
+    console.log(typeof id.id);
+    const result = await this.jobsService.update(id, updateJobDto);
+    return ControllerResponse(result.status, result.message, result.details);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobsService.remove(+id);
+  async remove(@Param() id: JobIdDto): Promise<ControllerResponseDataType> {
+    const result = await this.jobsService.remove(id);
+    return ControllerResponse(result.status, result.message, result.details);
   }
 }

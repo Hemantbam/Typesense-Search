@@ -52,6 +52,6 @@ export class CreateJobDto {
   education_level?: string;
 
   @IsDateString()
-  @IsOptional()
+  @IsNotEmpty()
   application_deadline?: string;
 }

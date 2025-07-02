@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { CreateJobDto } from '../Dto/create-job.dto';
 import { UpdateJobDto } from '../Dto/update-job.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { ResponseHandler } from 'src/Utils/responseHandeller';
 import { ServiceResponseDataType } from 'src/Utils/apiResponse';
 import { TypeSenseService } from 'src/TypeSense/typesense.service';
+import { JobIdDto, SearchJobDto } from '../Dto/common-job.dto';
 @Injectable()
 export class JobsService {
   constructor(
@@ -38,10 +39,11 @@ export class JobsService {
         remote_option: dbResult.remote_option,
         experience_required: dbResult.experience_required || '',
         education_level: dbResult.education_level || '',
-        application_deadline:
-          dbResult.application_deadline?.toISOString() || '',
-        posted_at: dbResult.posted_at.toISOString(),
-        updated_at: dbResult.updated_at.toISOString(),
+        application_deadline: dbResult.application_deadline
+          ? new Date(dbResult.application_deadline).toISOString()
+          : '',
+        posted_at: new Date(dbResult.posted_at).getTime(),
+        updated_at: new Date(dbResult.updated_at).getTime(),
       });
       return this.responseHandler.successResponse('A new job is added');
     } catch (error) {
@@ -51,19 +53,132 @@ export class JobsService {
     }
   }
 
-  findAll() {
-    return `This action returns all jobs`;
+  async findAllJobs(): Promise<ServiceResponseDataType> {
+    try {
+      const allJobs = await this.jobRepository.find();
+
+      if (!allJobs.length) {
+        return this.responseHandler.notFoundResponse(
+          'No jobs available at the moment',
+        );
+      }
+
+      return this.responseHandler.successResponse(
+        'All job data fetched successfully',
+        allJobs,
+      );
+    } catch (error) {
+      return this.responseHandler.unexpectedErrorResponse(
+        'Internal server error while fetching jobs',
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} job`;
+  async findOne(query: SearchJobDto): Promise<ServiceResponseDataType> {
+    try {
+      const searchResult = await this.typeSenseService
+        .getClient()
+        .collections('jobs')
+        .documents()
+        .search({
+          q: query.q,
+          query_by: 'title,company_name,description,location',
+        });
+
+      return this.responseHandler.successResponse(
+        'Search completed',
+        searchResult.hits?.map((hit) => hit.document),
+      );
+    } catch (error) {
+      console.log(error);
+      return this.responseHandler.unexpectedErrorResponse(
+        'Internal server error while fetching jobs',
+      );
+    }
   }
 
-  update(id: number, updateJobDto: UpdateJobDto) {
-    return `This action updates a #${id} job`;
+  async update(
+    jobId: JobIdDto,
+    updateJobDto: UpdateJobDto,
+  ): Promise<ServiceResponseDataType> {
+    try {
+      const id = jobId.id;
+      const existingJob = await this.jobRepository.findOne({ where: { id } });
+
+      if (!existingJob) {
+        return this.responseHandler.notFoundResponse(
+          `Job with ID ${id} not found.`,
+        );
+      }
+
+      const updatedJob = Object.assign(existingJob, updateJobDto);
+      await this.jobRepository.save(updatedJob);
+
+      const formattedJob = {
+        id: updatedJob.id.toString(),
+        title: updatedJob.title,
+        company_name: updatedJob.company_name,
+        location: updatedJob.location,
+        description: updatedJob.description,
+        employment_type: updatedJob.employment_type,
+        hourly_pay: updatedJob.hourly_pay,
+        urgent_hiring: updatedJob.urgent_hiring,
+        remote_option: updatedJob.remote_option,
+        experience_required: updatedJob.experience_required || '',
+        education_level: updatedJob.education_level || '',
+        application_deadline: updateJobDto.application_deadline
+          ? new Date(updateJobDto.application_deadline).toISOString()
+          : '',
+        posted_at: new Date(updatedJob.posted_at).getTime(),
+        updated_at: new Date(updatedJob.updated_at).getTime(),
+      };
+
+      await this.typeSenseService
+        .getClient()
+        .collections('jobs')
+        .documents()
+        .upsert(formattedJob);
+
+      return this.responseHandler.successResponse(
+        'Job updated successfully and synced with Typesense',
+        updatedJob,
+      );
+    } catch (error) {
+      console.error('Error updating job:', error);
+      return this.responseHandler.unexpectedErrorResponse(
+        'Failed to update job',
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} job`;
+  async remove(jobId: JobIdDto): Promise<ServiceResponseDataType> {
+    try {
+      const id = jobId.id;
+      const job = await this.jobRepository.findOne({ where: { id } });
+
+      if (!job) {
+        return this.responseHandler.notFoundResponse(
+          `Job with ID ${id} not found.`,
+        );
+      }
+
+      await this.jobRepository.delete(id!);
+
+      await this.typeSenseService
+        .getClient()
+        .collections('jobs')
+        .documents(id!.toString())
+        .delete();
+
+      return this.responseHandler.successResponse(
+        'Job deleted successfully',
+        null,
+      );
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      return this.responseHandler.unexpectedErrorResponse(
+        'Failed to delete job',
+      );
+    }
   }
 }
