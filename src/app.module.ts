@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { RoomModule } from './Modules/Room/room.module';
+import { RoomModule } from './Room/room.module';
 import { AppDbModule } from 'DbConn/dbConn';
-import { JobsModule } from './Modules/jobs/jobs.module';
+import { JobsModule } from './jobs/jobs.module';
 @Module({
   imports: [RoomModule, AppDbModule, JobsModule],
   controllers: [],

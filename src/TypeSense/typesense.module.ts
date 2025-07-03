@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeSenseService } from './typesense.service';
-import { RoomModule } from 'src/Modules/Room/room.module';
+import { RoomModule } from 'src/Room/room.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RoomEntity } from 'src/Modules/Room/Entities/room.entity';
-import { JobEntity } from 'src/Modules/jobs/Entities/job.entity';
-import { JobsModule } from 'src/Modules/jobs/jobs.module';
+import { RoomEntity } from 'src/Room/Entities/room.entity';
+import { JobEntity } from 'src/jobs/Entities/job.entity';
+import { JobsModule } from 'src/jobs/jobs.module';
 
 @Module({
   imports: [

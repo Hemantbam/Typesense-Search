@@ -4,7 +4,7 @@ import { RoomDto, UpdateRoomDto } from '../Dto/room.dto';
 import { ServiceResponseDataType } from 'src/Utils/apiResponse';
 import { TypeSenseService } from 'src/TypeSense/typesense.service';
 import { Repository } from 'typeorm';
-import { RoomEntity } from 'src/Modules/Room/Entities/room.entity';
+import { RoomEntity } from 'src/Room/Entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomIdDto } from '../Dto/room.dto';
 @Injectable()
