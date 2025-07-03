@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JobEntity } from 'src/jobs/Entities/job.entity';
-import { RoomEntity } from 'src/Room/Entities/room.entity';
+import { JobEntity } from 'src/jobs/entities/job.entity';
+import { RoomEntity } from 'src/room/entities/room.entity';
 
 @Module({
   imports: [

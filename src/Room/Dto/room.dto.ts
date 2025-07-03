@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-// src/Dto/room.dto.ts
 import {
   IsString,
   IsNumber,

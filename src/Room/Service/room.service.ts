@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ResponseHandler } from 'src/Utils/responseHandeller';
-import { RoomDto, UpdateRoomDto } from '../Dto/room.dto';
-import { ServiceResponseDataType } from 'src/Utils/apiResponse';
-import { TypeSenseService } from 'src/TypeSense/typesense.service';
+import { ResponseHandler } from 'src/utils/responseHandeller';
+import { RoomDto, UpdateRoomDto } from '../dto/room.dto';
+import { ServiceResponseDataType } from 'src/utils/apiResponse';
+import { TypeSenseService } from 'src/typeSense/typesense.service';
 import { Repository } from 'typeorm';
-import { RoomEntity } from 'src/Room/Entities/room.entity';
+import { RoomEntity } from 'src/room/entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoomIdDto } from '../Dto/room.dto';
+import { RoomIdDto } from '../dto/room.dto';
 @Injectable()
 export class RoomService {
   constructor(

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { RoomModule } from './Room/room.module';
+import { RoomModule } from './room/room.module';
 import { AppDbModule } from 'DbConn/dbConn';
 import { JobsModule } from './jobs/jobs.module';
 @Module({

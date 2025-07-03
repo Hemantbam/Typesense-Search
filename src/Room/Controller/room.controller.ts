@@ -13,12 +13,13 @@ import {
   RoomIdDto,
   SearchRoomDto,
   UpdateRoomDto,
-} from '../Dto/room.dto';
-import { RoomService } from '../Service/room.service';
+} from '../dto/room.dto';
+
+import { RoomService } from '../service/room.service';
 import {
   ControllerResponse,
   ControllerResponseDataType,
-} from 'src/Utils/apiResponse';
+} from 'src/utils/apiResponse';
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}

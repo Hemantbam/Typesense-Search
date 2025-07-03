@@ -1,13 +1,13 @@
 import { Injectable, Query } from '@nestjs/common';
-import { CreateJobDto } from '../Dto/create-job.dto';
-import { UpdateJobDto } from '../Dto/update-job.dto';
+import { CreateJobDto } from '../dto/create-job.dto';
+import { UpdateJobDto } from '../dto/update-job.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobEntity } from '../Entities/job.entity';
+import { JobEntity } from '../entities/job.entity';
 import { Repository } from 'typeorm';
-import { ResponseHandler } from 'src/Utils/responseHandeller';
-import { ServiceResponseDataType } from 'src/Utils/apiResponse';
-import { TypeSenseService } from 'src/TypeSense/typesense.service';
-import { JobIdDto, SearchJobDto } from '../Dto/common-job.dto';
+import { ResponseHandler } from 'src/utils/responseHandeller';
+import { ServiceResponseDataType } from 'src/utils/apiResponse';
+import { TypeSenseService } from 'src/typeSense/typesense.service';
+import { JobIdDto, SearchJobDto } from '../dto/common-job.dto';
 @Injectable()
 export class JobsService {
   constructor(

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { JobsService } from './Service/jobs.service';
-import { JobsController } from './Controller/jobs.controller';
-import { TypeSenseModule } from 'src/TypeSense/typesense.module';
+import { JobsService } from './service/jobs.service';
+import { JobsController } from './controller/jobs.controller';
+import { TypeSenseModule } from 'src/typeSense/typesense.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { forwardRef } from '@nestjs/common';
-import { ResponseHandler } from 'src/Utils/responseHandeller';
-import { JobEntity } from './Entities/job.entity';
+import { ResponseHandler } from 'src/utils/responseHandeller';
+import { JobEntity } from './entities/job.entity';
 
 @Module({
   imports: [
