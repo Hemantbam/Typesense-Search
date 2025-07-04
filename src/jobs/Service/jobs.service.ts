@@ -126,8 +126,8 @@ export class JobsService {
         remote_option: updatedJob.remote_option,
         experience_required: updatedJob.experience_required || '',
         education_level: updatedJob.education_level || '',
-        application_deadline: updateJobDto.application_deadline
-          ? new Date(updateJobDto.application_deadline).toISOString()
+        application_deadline: updatedJob.application_deadline
+          ? new Date(updatedJob.application_deadline).toISOString()
           : '',
         posted_at: new Date(updatedJob.posted_at).getTime(),
         updated_at: new Date(updatedJob.updated_at).getTime(),

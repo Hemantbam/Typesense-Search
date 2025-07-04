@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { RoomEntity } from 'src/room/entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobEntity } from 'src/jobs/entities/job.entity';
-import { JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 @Injectable()
 export class TypeSenseService implements OnModuleInit {
   private client: Client;
