@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ResponseHandler } from 'src/utilsTemp/responseHandeller';
+import { ResponseHandler } from 'src/utils/responseHandeller';
 import { RoomDto, UpdateRoomDto } from '../dto/room.dto';
-import { ServiceResponseDataType } from 'src/utilsTemp/apiResponse';
-import { TypeSenseService } from 'src/typesenseTemp/typesense.service';
+import { ServiceResponseDataType } from 'src/utils/apiResponse';
+import { TypeSenseService } from 'src/typesense/typesense.service';
 import { Repository } from 'typeorm';
-import { RoomEntity } from 'src/roomTemp/entities/room.entity';
+import { RoomEntity } from 'src/room/entities/entities/room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomIdDto } from '../dto/room.dto';
 @Injectable()

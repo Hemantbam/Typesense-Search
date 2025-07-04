@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { RoomController } from './controller/room.controller';
 import { RoomService } from './service/room.service';
-import { ResponseHandler } from 'src/utilsTemp/responseHandeller';
-import { RoomEntity } from 'src/roomTemp/entities/room.entity';
+import { ResponseHandler } from 'src/utils/responseHandeller';
+import { RoomEntity } from 'src/room/entities/entities/room.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeSenseModule } from 'src/typesenseTemp/typesense.module';
+import { TypeSenseModule } from 'src/typesense/typesense.module';
 
 @Module({
   imports: [
