@@ -4,9 +4,9 @@ import { UpdateJobDto } from '../dto/update-job.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobEntity } from '../entities/job.entity';
 import { Repository } from 'typeorm';
-import { ResponseHandler } from 'src/utils/responseHandeller';
-import { ServiceResponseDataType } from 'src/utils/apiResponse';
-import { TypeSenseService } from 'src/typeSense/typesense.service';
+import { ResponseHandler } from 'src/utilsTemp/responseHandeller';
+import { ServiceResponseDataType } from 'src/utilsTemp/apiResponse';
+import { TypeSenseService } from 'src/typesenseTemp/typesense.service';
 import { JobIdDto, SearchJobDto } from '../dto/common-job.dto';
 @Injectable()
 export class JobsService {

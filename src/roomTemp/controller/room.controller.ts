@@ -19,7 +19,7 @@ import { RoomService } from '../service/room.service';
 import {
   ControllerResponse,
   ControllerResponseDataType,
-} from 'src/utils/apiResponse';
+} from 'src/utilsTemp/apiResponse';
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}

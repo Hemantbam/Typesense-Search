@@ -11,8 +11,8 @@ import {
 import { JobsService } from '../service/jobs.service';
 import { CreateJobDto } from '../dto/create-job.dto';
 import { UpdateJobDto } from '../dto/update-job.dto';
-import { ControllerResponseDataType } from 'src/utils/apiResponse';
-import { ControllerResponse } from 'src/utils/apiResponse';
+import { ControllerResponseDataType } from 'src/utilsTemp/apiResponse';
+import { ControllerResponse } from 'src/utilsTemp/apiResponse';
 import { JobIdDto, SearchJobDto } from '../dto/common-job.dto';
 
 @Controller('jobs')

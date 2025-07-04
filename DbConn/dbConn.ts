@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobEntity } from 'src/jobs/entities/job.entity';
-import { RoomEntity } from 'src/room/entities/room.entity';
+import { RoomEntity } from 'src/roomTemp/entities/room.entity';
 
 @Module({
   imports: [
