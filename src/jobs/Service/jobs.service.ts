@@ -8,6 +8,10 @@ import { ResponseHandler } from 'src/utils/responseHandeller';
 import { ServiceResponseDataType } from 'src/utils/apiResponse';
 import { TypeSenseService } from 'src/typesense/typesense.service';
 import { JobIdDto, SearchJobDto } from '../dto/common-job.dto';
+import {
+  SearchParams,
+  SearchResponse,
+} from 'typesense/lib/Typesense/Documents';
 @Injectable()
 export class JobsService {
   constructor(
@@ -44,6 +48,10 @@ export class JobsService {
           : '',
         posted_at: new Date(dbResult.posted_at).getTime(),
         updated_at: new Date(dbResult.updated_at).getTime(),
+        geo: {
+          lat: dbResult.latitude ?? 0,
+          long: dbResult.longitude ?? 0,
+        },
       });
       return this.responseHandler.successResponse('A new job is added');
     } catch (error) {
@@ -76,21 +84,31 @@ export class JobsService {
 
   async findOne(query: SearchJobDto): Promise<ServiceResponseDataType> {
     try {
-      const searchResult = await this.typeSenseService
-        .getClient()
-        .collections('jobs')
-        .documents()
-        .search({
-          q: query.q,
-          query_by: 'title,company_name,description,location',
-        });
+      console.log(query);
+      console.log(typeof query.lat);
+      const searchParams: SearchParams = {
+        q: query.q || '*',
+        query_by: 'title,company_name,description,location',
+        per_page: 20,
+      };
+
+      if (query.lat != null && query.lng != null) {
+        searchParams.sort_by = `_geo(${query.lat},${query.lng}):asc`;
+      }
+
+      const searchResult: SearchResponse<Record<string, any>> =
+        await this.typeSenseService
+          .getClient()
+          .collections('jobs')
+          .documents()
+          .search(searchParams);
 
       return this.responseHandler.successResponse(
         'Search completed',
         searchResult.hits?.map((hit) => hit.document),
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return this.responseHandler.unexpectedErrorResponse(
         'Internal server error while fetching jobs',
       );

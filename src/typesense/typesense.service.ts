@@ -34,7 +34,8 @@ export class TypeSenseService implements OnModuleInit {
   async onModuleInit() {
     await this.createOrUpdateRoomCollection();
     await this.syncAllRoomsToTypesense();
-
+    await this.client.collections('jobs').delete();
+    console.log('Deleted old jobs collection');
     await this.createOrUpdateJobCollection();
     await this.syncAllJobsToTypesense();
   }
@@ -141,12 +142,15 @@ export class TypeSenseService implements OnModuleInit {
         { name: 'application_deadline', type: 'string', optional: true },
         { name: 'posted_at', type: 'int64' },
         { name: 'updated_at', type: 'int64' },
+        { name: '_geo', type: 'geopoint' },
       ],
       default_sorting_field: 'posted_at',
     };
 
     try {
       await this.client.collections('jobs').retrieve();
+      const collection = await this.client.collections('jobs').retrieve();
+      console.log(collection.fields);
       console.log('Jobs collection already exists.');
     } catch {
       await this.client.collections().create(schema as any);
@@ -181,6 +185,10 @@ export class TypeSenseService implements OnModuleInit {
             : '',
           posted_at: new Date(job.posted_at).getTime(),
           updated_at: new Date(job.updated_at).getTime(),
+          _geo: {
+            lat: job.latitude ?? 0,
+            lng: job.longitude ?? 0,
+          },
         };
 
         return this.indexJobs(formattedJob);

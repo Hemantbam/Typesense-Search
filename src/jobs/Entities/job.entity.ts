@@ -20,6 +20,12 @@ export class JobEntity {
   @Column({ length: 255 })
   location: string;
 
+  @Column('decimal', { precision: 9, scale: 6, nullable: true })
+  latitude?: number;
+
+  @Column('decimal', { precision: 9, scale: 6, nullable: true })
+  longitude?: number;
+
   @Column('text')
   description: string;
 

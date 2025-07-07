@@ -6,6 +6,8 @@ import {
   IsBoolean,
   IsOptional,
   IsDateString,
+  IsLatitude,
+  IsLongitude,
 } from 'class-validator';
 
 export class CreateJobDto {
@@ -32,6 +34,7 @@ export class CreateJobDto {
     | 'Contract'
     | 'Internship'
     | 'Temporary';
+
   @IsNumber()
   hourly_pay: number;
 
@@ -52,6 +55,14 @@ export class CreateJobDto {
   education_level?: string;
 
   @IsDateString()
-  @IsNotEmpty()
+  @IsOptional()
   application_deadline?: string;
+
+  @IsLatitude()
+  @IsOptional()
+  latitude?: number;
+
+  @IsLongitude()
+  @IsOptional()
+  longitude?: number;
 }
