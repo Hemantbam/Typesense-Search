@@ -26,7 +26,7 @@ export class JobsController {
     const result = await this.jobsService.create(createJobDto);
     return ControllerResponse(result.status, result.message, result.details);
   }
-
+ 
   @Get()
   async findAll(): Promise<ControllerResponseDataType> {
     const result = await this.jobsService.findAllJobs();

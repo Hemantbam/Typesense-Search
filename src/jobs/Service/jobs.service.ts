@@ -31,6 +31,7 @@ export class JobsService {
           'Error in adding a new details',
         );
       }
+
       await this.typeSenseService.indexJobs({
         id: dbResult.id.toString(),
         title: dbResult.title,
@@ -48,13 +49,11 @@ export class JobsService {
           : '',
         posted_at: new Date(dbResult.posted_at).getTime(),
         updated_at: new Date(dbResult.updated_at).getTime(),
-        geo: {
-          lat: dbResult.latitude ?? 0,
-          long: dbResult.longitude ?? 0,
-        },
+        _geo: [dbResult.latitude ?? 0, dbResult.longitude ?? 0],
       });
       return this.responseHandler.successResponse('A new job is added');
     } catch (error) {
+      console.log(error);
       return this.responseHandler.unexpectedErrorResponse(
         'Internal server error',
       );

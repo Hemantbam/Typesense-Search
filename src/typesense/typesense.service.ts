@@ -185,12 +185,8 @@ export class TypeSenseService implements OnModuleInit {
             : '',
           posted_at: new Date(job.posted_at).getTime(),
           updated_at: new Date(job.updated_at).getTime(),
-          _geo: {
-            lat: job.latitude ?? 0,
-            lng: job.longitude ?? 0,
-          },
+          _geo: [Number(job.latitude) || 0, Number(job.longitude) || 0],
         };
-
         return this.indexJobs(formattedJob);
       });
 
