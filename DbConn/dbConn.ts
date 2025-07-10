@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventEntity } from 'src/events/entities/event.entity';
 import { JobEntity } from 'src/jobs/entities/job.entity';
 import { RoomEntity } from 'src/room/entities/entities/room.entity';
-
+import { User } from 'src/user/entities/user.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,7 +19,7 @@ import { RoomEntity } from 'src/room/entities/entities/room.entity';
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        entities: [RoomEntity, JobEntity],
+        entities: [RoomEntity, JobEntity, User, EventEntity],
         synchronize: false,
       }),
     }),

@@ -34,8 +34,6 @@ export class TypeSenseService implements OnModuleInit {
   async onModuleInit() {
     await this.createOrUpdateRoomCollection();
     await this.syncAllRoomsToTypesense();
-    await this.client.collections('jobs').delete();
-    console.log('Deleted old jobs collection');
     await this.createOrUpdateJobCollection();
     await this.syncAllJobsToTypesense();
   }
