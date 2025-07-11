@@ -14,6 +14,8 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { ControllerResponseDataType } from 'src/utils/apiResponse';
 import { ControllerResponse } from 'src/utils/apiResponse';
 import { UUID } from 'crypto';
+import { UserCredentialDto } from '../dto/user-credential.dto';
+import { AdminAUth, Auth } from 'src/guards/auth.decorator';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -25,6 +27,17 @@ export class UserController {
     const result = await this.userService.create(createUserDto);
     return ControllerResponse(result.status, result.message, result.details);
   }
+
+  @Post('/auth')
+  async signIn(
+    @Body() userCredential: UserCredentialDto,
+  ): Promise<ControllerResponseDataType> {
+    const result = await this.userService.signIn(userCredential);
+    return ControllerResponse(result.status, result.message, result.details);
+  }
+
+  // @Auth()
+  @AdminAUth()
   @Get()
   async findAll() {
     const result = await this.userService.findAll();

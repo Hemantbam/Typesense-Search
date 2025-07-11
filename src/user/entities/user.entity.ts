@@ -28,6 +28,9 @@ export class User {
   @Column({ default: false })
   verified: boolean;
 
+  @Column({ length: 20, default: 'user' })
+  role: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 }

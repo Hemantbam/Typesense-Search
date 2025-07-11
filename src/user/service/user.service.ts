@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -7,6 +8,9 @@ import { Repository } from 'typeorm';
 import { ResponseHandler } from 'src/utils/responseHandeller';
 import { ServiceResponseDataType } from 'src/utils/apiResponse';
 import { UUID } from 'crypto';
+import * as bcrypt from 'bcrypt';
+import { UserCredentialDto } from '../dto/user-credential.dto';
+import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class UserService {
   constructor(
@@ -29,6 +33,13 @@ export class UserService {
           'Please verify the email that is already registered',
         );
       }
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(
+        createUserDto.password,
+        saltRounds,
+      );
+
+      createUserDto.password = hashedPassword;
 
       const user = this.userRepository.create(createUserDto);
       const result = await this.userRepository.save(user);
@@ -43,6 +54,47 @@ export class UserService {
       );
     } catch (error) {
       console.error('User creation error:', error);
+      return this.responseHandler.unexpectedErrorResponse(
+        'Internal server error',
+      );
+    }
+  }
+
+  async signIn(
+    userCredentialDto: UserCredentialDto,
+  ): Promise<ServiceResponseDataType> {
+    try {
+      const findEmail = await this.userRepository.findOne({
+        where: { email: userCredentialDto.email },
+      });
+
+      if (!findEmail) {
+        return this.responseHandler.notFoundResponse(
+          'No user details found with given email',
+        );
+      }
+      const passwordCompare = await bcrypt.compare(
+        userCredentialDto.password,
+        findEmail?.password,
+      );
+
+      if (!passwordCompare) {
+        return this.responseHandler.badRequestResponse('Incorrect password');
+      }
+      const secretKey = process.env.secretKey;
+      const token = jwt.sign(
+        {
+          id: findEmail.id,
+          email: findEmail.email,
+          name: findEmail.name,
+          role: findEmail.role,
+        },
+        secretKey,
+        { expiresIn: '1hr' },
+      );
+      return this.responseHandler.successResponse('Login successful', token);
+    } catch (error) {
+      console.log(error);
       return this.responseHandler.unexpectedErrorResponse(
         'Internal server error',
       );
@@ -98,6 +150,14 @@ export class UserService {
       });
       if (!userDetails) {
         return this.responseHandler.notFoundResponse('No user details found');
+      }
+      if (updateUserDto.password) {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(
+          updateUserDto.password,
+          saltRounds,
+        );
+        updateUserDto.password = hashedPassword;
       }
       const updateUser = Object.assign(userDetails, updateUserDto);
       const result = await this.userRepository.save(updateUser);
